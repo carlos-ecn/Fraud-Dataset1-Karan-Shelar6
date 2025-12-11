@@ -1,0 +1,191 @@
+Decomposição do Projeto
+
+Projeto: Sistema Preditivo de Fraude Financeira
+
+Elaborador: Carlos Eduardo Cruz Nakandakare
+
+-----------------------------------------------------
+
+Dataset Source:
+
+Este projeto utiliza o dataset 'Fraud Dataset' disponível no Kaggle, criado por Karan-Shelar6.
+
+=====================================
+
+INTRODUÇÃO E OBJETIVO
+
+=====================================
+
+1\. Contextualização e Definição de Escopo
+
+
+1.1 Objetivo Principal
+
+Identificação de Fraudes no Banco de Dados Financeiro, utilizando aprendizado de máquina. 
+
+O foco é buscar melhor aproveitamento do Recall (detecção de fraude) e a Precisão (confiabilidade da previsão), 
+
+e otimizar o trade-off entre Prejuízo (Falsos Negativos) e Experiência do Cliente (Falsos Positivos).
+
+
+1.2 Estratégia de Simulação
+
+Desenvolvimento de um Sistema de Classificação de Fraude baseado em Time-Series Split, onde o modelo será treinado com 
+
+transações passadas (step antigo) e validado em transações futuras (step futuro), simulando o ambiente real de produção com a 
+
+chegada periódica de novos dados e clientes.
+
+
+
+1.3 Hipóteses de Negócio
+
+H1: Não está detectando padrões de fraude em clientes recorrentes, resultando em Falsos Negativos.
+
+
+
+H2: Falha na identificação de fraudes em clientes novos, devido à escassez de dados históricos, 
+
+mas os padrões transacionais podem ser capturados por Feature Engineering.
+
+
+
+H3: A alta taxa de Falsos Positivos (bloqueio indevido) está prejudicando a experiência do cliente.
+
+
+
+H4: A implementação do modelo de ML trará um Retorno sobre o Investimento (ROI) positivo através da redução das perdas financeiras.
+
+
+=====================================
+
+PLANO DE AÇÃO
+
+=====================================
+
+2\. Fase I: Análise Exploratória e Engenharia de Variáveis (Preparação)
+
+2.1 Carregamento e Tratamento de Dados
+
+2.1.1. Carregamento da base de dados e verificação da periodicidade (step). 
+
+2.1.2. Análise e tratamento de valores nulos e duplicados. 
+
+2.1.3. Verificação do formato/tipo dos dados (str, int, float, etc.) e conversão, se necessário.
+
+
+
+2.2 Análise Exploratória de Dados (EDA)
+
+2.2.1. Diagnóstico do Desequilíbrio de Classes: Verificação da distribuição da variável target (isFraud). 
+
+2.2.2. Análise da distribuição das transações por tipo (type) e step. 
+
+2.2.3. Verificação da quantidade de clientes origem e destino. 
+
+2.2.4. Identificação de outliers na coluna amount e em outras variáveis numéricas. 
+
+2.2.5. Análise de correlação entre as variáveis. 
+
+2.2.6. Visualizações de dados (Histogramas, Boxplots, Gráficos de Dispersão) para validação das hipóteses.
+
+
+
+2.3 Engenharia de Variáveis (Feature Engineering)
+
+2.3.1. Criação de features comportamentais de clientes (agrupamento por nameOrig e nameDest): 
+
+\* Criação de variáveis de contagem de transações por cliente. 
+
+\* Criação de variáveis de soma total de valores transacionados por cliente. 
+
+2.3.2. Análise da Razão Transacional: 
+
+\* Cálculo da média histórica de amount por cliente. 
+
+\* Cálculo da razão entre o amount da transação atual e a média histórica do cliente.
+
+
+
+2.4 Pré-processamento Final
+
+2.4.1. Codificação de variáveis categóricas remanescentes (ex: One-Hot Encoding ou Label Encoding na feature (coluna) 'type'). 
+
+2.4.2. Normalização ou Padronização de variáveis numéricas, se necessário.
+
+
+
+3\. Fase II: Estratégia de Modelagem e Treinamento
+
+3.1 Implementação do Time-Series Split
+
+3.1.1. Separação da variável target (isFraud) das features (variáveis preditoras). 
+
+3.1.2. Divisão da base em 70% (Treino) e 30% (Teste) utilizando a coluna step como critério cronológico de separação, simulando a chegada de novos dados.
+
+
+
+3.2 Seleção e Preparação dos Modelos
+
+3.2.1. Definição dos modelos de Classificação a serem testados: Gradient Boosting (XGBoost/LightGBM) e Random Forest.
+
+3.2.2. Aplicação de técnicas de tratamento de desequilíbrio (ex: ajuste do scale_pos_weight dos modelos).
+
+
+
+3.3 Treinamento e Otimização
+
+3.3.1. Treinamento dos modelos no conjunto de Treino (70%). 
+
+3.3.2. Otimização de hiperparâmetros (ex: Grid Search ou Random Search) utilizando uma Validação Cruzada sensível ao tempo (Time-Series Cross-Validation).
+
+
+
+4\. Fase III: Avaliação e Apresentação de Resultados
+
+4.1 Avaliação Crítica do Modelo (Teste Realista)
+
+4.1.1. Aplicação do modelo final (o melhor modelo otimizado) no conjunto de Teste (30% - dados futuros). 
+
+4.1.2. Análise do desempenho utilizando métricas adequadas para desequilíbrio: 
+
+Meta das Métricas para avaliação dos Modelos: 80%
+
+\* Recall (Maximização da detecção de fraudes). 
+
+\* Precisão (Minimização de bloqueios indevidos). 
+
+\* F1-Score (Métrica de equilíbrio entre Recall e Precisão). 
+
+\* Matriz de Confusão. 
+
+4.1.3. Análise da importância e pesos das variáveis (Feature Importance) para interpretar o modelo.
+
+
+=====================================
+
+CONCLUSÃO
+
+=====================================
+
+5.1 Discussão dos Resultados
+
+
+5.2 Análise de Impacto de Negócio
+
+5.2.1. Comparação dos casos 'isFraud' do histórico com as classificações de Fraude do Modelo.
+
+5.2.2. Cálculo do custo financeiro dos Falsos Negativos (fraudes não detectadas). 
+
+5.2.3. Cálculo do custo (indireto) dos Falsos Positivos (bloqueios indevidos). 
+
+5.2.4. Demonstração do Retorno sobre o Investimento (ROI) e da economia líquida gerada pelo novo modelo.
+
+
+
+5.3 Entrega Final
+
+5.3.1. Documentação do código Python. 
+
+5.3.2. Criação de um Dashboard de Gestão (Tableau) para visualização das principais métricas de desempenho e do impacto financeiro do modelo.
+
